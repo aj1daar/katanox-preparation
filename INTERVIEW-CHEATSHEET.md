@@ -91,16 +91,40 @@ a.equals(b)                       // WRONG — 1.0 != 1.00 with equals
 
 The interviewer WILL ask. State it before they do.
 
-| Operation | Complexity |
-|-----------|-----------|
-| HashMap get/put | O(1) average |
-| HashSet contains | O(1) average |
-| Sort n elements | O(n log n) |
-| Nested loop over n | O(n²) — always wrong at 1M+ |
-| Stream flatMap + groupBy | O(n) |
-| LocalDate.datesUntil × n bookings | O(n × avg_stay_length) |
+### Big O names (say the full name out loud, not just the symbol)
 
-When you write a solution say: "This is O(n log n) — the sort dominates. The groupBy is a single pass so O(n)."
+| Notation | Full name | Plain English | Doubles input → runtime... |
+|----------|-----------|---------------|---------------------------|
+| O(1) | Constant time | Same speed regardless of input size | stays the same |
+| O(log n) | Logarithmic time | Cuts the problem in half each step | grows by ~1 step |
+| O(n) | Linear time | One pass through the data | doubles |
+| O(n log n) | Linearithmic time | Linear with a sort on top | slightly more than doubles |
+| O(n²) | Quadratic time | Nested loop over the same data | quadruples |
+| O(n³) | Cubic time | Triple nested loop | 8× |
+| O(2ⁿ) | Exponential time | Every subset/combination explored | catastrophic |
+
+### Common operations in this codebase
+
+| Operation | Complexity | Why |
+|-----------|-----------|-----|
+| `HashMap.get` / `HashMap.put` | O(1) average | Hash bucket lookup; O(n) worst-case (all collisions) |
+| `HashSet.contains` | O(1) average | Same hash mechanism |
+| `ArrayList.get(i)` | O(1) | Direct index into backing array |
+| `ArrayList.contains(x)` | O(n) | Linear scan — **never use inside a loop** |
+| Sort n elements (`Collections.sort`, `stream().sorted()`) | O(n log n) | TimSort |
+| `Collectors.groupingBy` over n elements | O(n) | Single pass, O(1) map inserts |
+| `Collectors.toMap` with merge function | O(n) | Single pass |
+| Nested loop over same list | O(n²) | Always wrong at 1M+ records |
+| `LocalDate.datesUntil(checkOut)` per booking × n bookings | O(n × s) | s = average stay length |
+| Building a `HashSet` from n elements then k lookups | O(n + k) | Beats O(n × k) nested loop |
+| `stream().filter().findFirst()` | O(n) worst | Stops at first match |
+| `stream().allMatch()` / `anyMatch()` | O(n) worst | Short-circuits on first failure/match |
+
+### How to say it in the interview
+
+> "This runs in O(n log n) — linear time, because the sort dominates. The groupBy is a single pass, so O(n) there. Overall O(n log n). Space is O(n) for the map."
+
+Always give **both** time **and** space complexity. Space is easy to forget and easy to score.
 
 ---
 
