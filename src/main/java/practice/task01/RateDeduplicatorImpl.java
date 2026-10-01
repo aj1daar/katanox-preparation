@@ -2,6 +2,8 @@ package practice.task01;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class RateDeduplicatorImpl {
 
@@ -14,6 +16,10 @@ public class RateDeduplicatorImpl {
      * @return map keyed by rateId → winning RateUpdate
      */
     public Map<String, RateUpdate> deduplicate(List<RateUpdate> updates) {
-        throw new UnsupportedOperationException("not implemented");
+        return updates.stream()
+                .collect(Collectors .toMap(RateUpdate::rateId,
+                        Function.identity(), (a, b) -> {
+                            return a.timestampMs() > b.timestampMs() ? a : b;
+                        }));
     }
 }
