@@ -1,6 +1,7 @@
 package practice.task04;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class ReservationWindow {
@@ -16,6 +17,15 @@ public class ReservationWindow {
      * @return count of events within the window
      */
     public long countInLastMinutes(List<ReservationEvent> events, long windowMinutes, Instant now) {
-        throw new UnsupportedOperationException("not implemented");
+        long count = 0;
+
+        for (ReservationEvent event: events){
+            Instant lowerBoundary = now.minus(windowMinutes, ChronoUnit.MINUTES);
+            if ((event.createdAt().isAfter(lowerBoundary) || event.createdAt().equals(lowerBoundary)) &&
+                    (event.createdAt().isBefore(now) || event.createdAt().equals(now))){
+                count++;
+            }
+        }
+        return count;
     }
 }
