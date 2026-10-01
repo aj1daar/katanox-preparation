@@ -6,4 +6,6 @@ package practice.task05;
 // Java 8 equivalent:
 //   POJOs with equals/hashCode, HashSet, Iterator-based filtering, manual sort
 
-public record ReservationRef(String reservationId, String source) {}
+public record ReservationRef(String reservationId, String source) {
+
+}
