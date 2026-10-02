@@ -199,6 +199,41 @@ These signal domain awareness, not just algorithm knowledge:
 
 ---
 
+## OOP — four pillars (know the one-line definitions)
+
+| Pillar | Definition | Example in this codebase |
+|--------|-----------|--------------------------|
+| **Encapsulation** | Bundle data and the methods that operate on it; hide internals | `record RateUpdate(...)` — fields are private, exposed only via accessors |
+| **Abstraction** | Expose what something does, hide how | `Reconciler.reconcile()` — caller sees inputs/outputs, not the HashMap inside |
+| **Inheritance** | A subtype inherits behaviour from a parent | `class PartnerABooking implements PartnerBooking` |
+| **Polymorphism** | Same interface, different behaviour per type | Pattern-matching switch dispatches differently per `PartnerBooking` subtype |
+
+---
+
+## SOLID — one line each, then a concrete example
+
+**S — Single Responsibility Principle**  
+A class should have one reason to change.  
+`RateDeduplicator` deduplicates. It does not parse, validate, or persist. If the dedup logic changes, only that class changes.
+
+**O — Open/Closed Principle**  
+Open for extension, closed for modification.  
+Adding a new partner booking type (`PartnerDBooking`) means adding a new `permits` entry and a new `case` arm — the existing cases are untouched.
+
+**L — Liskov Substitution Principle**  
+A subtype must be usable wherever its parent is expected without breaking behaviour.  
+Every `PartnerBooking` subtype can be passed to `normalise()` — the caller never needs to know which concrete type it received.
+
+**I — Interface Segregation Principle**  
+Don't force a class to implement methods it doesn't need.  
+`StopSellChecker` takes a `List<StopSellRestriction>` — not a fat "HotelConfig" object with 30 fields it ignores.
+
+**D — Dependency Inversion Principle**  
+Depend on abstractions, not concretions.  
+`BookingStateProcessor` takes `List<BookingEvent>` (an abstraction of the event stream), not a specific `KafkaConsumer` or `JdbcResultSet`.
+
+---
+
 ## Things NOT to do
 
 - `new BigDecimal(someDouble)` — imprecise
